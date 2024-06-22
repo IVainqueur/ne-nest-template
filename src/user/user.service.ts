@@ -5,6 +5,7 @@ import * as bcrypt from "bcrypt";
 import { SignUpDto } from "./dto/signup.dto";
 import { LoginDto } from "./dto/login.dto";
 import { UpdateUserDTO } from "./dto/updateuser.dto";
+import { TryCatch } from "src/utils/decorators/trycatch.decorator";
 
 @Injectable()
 export class UserService {
@@ -14,6 +15,7 @@ export class UserService {
     this.prisma = new PrismaClient();
   }
 
+  @TryCatch()
   async signUp(signupDto: SignUpDto) {
     const { firstName, lastName, email, password, role } = signupDto;
 
@@ -37,6 +39,7 @@ export class UserService {
     return user;
   }
 
+  @TryCatch()
   async login(loginDto: LoginDto) {
     const { email, password } = loginDto;
 
@@ -55,7 +58,16 @@ export class UserService {
     const token = this.jwtService.sign(payload);
 
     // Return the token
-    return { access_token: token };
+    return {
+      access_token: token,
+      user: {
+        id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        role: user.role,
+      },
+    };
   }
 
   async findAll() {

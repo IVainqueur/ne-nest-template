@@ -1,4 +1,4 @@
-import { IsEmail, IsEnum, IsNotEmpty, IsString } from 'class-validator';
+import { IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export enum UserRole {
   USER = "USER",
@@ -22,5 +22,6 @@ export class SignUpDto {
   password: string;
 
   @IsEnum(UserRole, { message: "Invalid role" })
+  @IsOptional()
   role: UserRole;
 }
